@@ -1,0 +1,2 @@
+public class context6 {
+}
