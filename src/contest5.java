@@ -1,28 +1,81 @@
 import java.util.*;
 
+
 public class contest5 {
+    private final static Scanner sc = new Scanner(System.in);
+
+    private static Set<List<Integer>> setOfNormal;
+    private static Set<List<Integer>> setOfNotNormal;
+
+    private static Integer countOfNormalDays;
+
+
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
-        List<Integer> components = new ArrayList<>();
-        for (int i = 0; i < n; i++)
-            components.add(sc.nextInt());
-        int res = countMaxFrequency(components);
-        System.out.println(res);
+        System.out.println(countOfNormalDays(inputArr()));
     }
 
-    static int countMaxFrequency(List<Integer> components) {
-        Collections.sort(components);
-        int res = 0;
-        for (int i = 0; i < components.size(); i++) {
-            int sum = 0;
-            int f = components.get(i);
-            sum += f;
-            for (int j = i + 1; j < components.size(); j++)
-                sum += components.get(j) - components.get(j) % f;
-            if (res < sum)
-                res = sum;
+    private static List<Integer> inputArr() {
+        int countOfDays = sc.nextInt();
+        List<Integer> arrOfSalary = new ArrayList<>();
+        for (int i = 0; i < countOfDays; i++) {
+            arrOfSalary.add(sc.nextInt());
         }
-        return res;
+
+        return arrOfSalary;
+    }
+
+    public static int countOfNormalDays(List<Integer> arrOfSalary) {
+        countOfNormalDays = 0;
+        List<Integer> arrNumOfDays = new ArrayList<>();
+
+        setOfNormal = new HashSet<>();
+        setOfNotNormal = new HashSet<>();
+
+        for (int i = 1; i <= arrOfSalary.size(); i++) arrNumOfDays.add(i);
+        countOfNormalDaysInner(arrOfSalary, arrNumOfDays);
+
+        return countOfNormalDays;
+    }
+
+    private static boolean countOfNormalDaysInner(List<Integer> arrOfSalary, List<Integer> arrNumOfDays) {
+        if (setOfNotNormal.contains(arrNumOfDays)) return false;
+        if (setOfNormal.contains(arrNumOfDays)) return true;
+
+        boolean isNormal = isPerfectTime(arrOfSalary);
+        isNormal = findNormalInSubArr(arrOfSalary, arrNumOfDays, isNormal);
+
+        if (isNormal) {
+            countOfNormalDays++;
+            setOfNormal.add(arrNumOfDays);
+        } else {
+            setOfNotNormal.add(arrNumOfDays);
+        }
+
+        return isNormal;
+    }
+
+    private static boolean findNormalInSubArr(List<Integer> arrOfSalary, List<Integer> arrNumOfDays, boolean isNormal) {
+        if (arrOfSalary.size() > 2) {
+            var isFirstPartNormal = countOfNormalDaysInner(
+                    arrOfSalary.subList(0, arrOfSalary.size() - 1),
+                    arrNumOfDays.subList(0, arrNumOfDays.size() - 1));
+
+            var isLastPartNormal = countOfNormalDaysInner(
+                    arrOfSalary.subList(1, arrOfSalary.size()),
+                    arrNumOfDays.subList(1, arrOfSalary.size()));
+
+            isNormal = isNormal || isFirstPartNormal || isLastPartNormal;
+        }
+
+        return isNormal;
+    }
+
+    private static boolean isPerfectTime(List<Integer> arrOfSalary) {
+        int sum = 0;
+        for (Integer day : arrOfSalary) {
+            sum += day;
+        }
+
+        return sum == 0;
     }
 }
