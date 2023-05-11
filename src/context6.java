@@ -8,10 +8,11 @@ public class context6 {
     public static class DiposonOfPoints implements Comparable<DiposonOfPoints> {
         Integer minPoint;
         Integer maxPoin;
-
+        Integer currentPoint;
         public DiposonOfPoints(Integer minPoint, Integer maxPoin) {
             this.minPoint = minPoint;
             this.maxPoin = maxPoin;
+            this.currentPoint = 0;
         }
 
         @Override
@@ -46,23 +47,28 @@ public class context6 {
     }
 
     private static void findOptimalPoints(int sumOfPoints, List<DiposonOfPoints> diposonOfPoints) {
-        var tempSumOfPoints = sumOfPoints;
-        while (tempSumOfPoints != 0) {
-            for (int i = 0; i < diposonOfPoints.size(); i++) {
-                if (tempSumOfPoints - diposonOfPoints.get(i).maxPoin > 0) {
-                    tempSumOfPoints -= diposonOfPoints.get(i).maxPoin;
-                } else if (tempSumOfPoints - diposonOfPoints.get(i).maxPoin < 0) {
-                    for (int j = 0; j < diposonOfPoints.size(); j++) {
-                        if (diposonOfPoints.get(j).maxPoin - 1 > diposonOfPoints.get(j + 1).maxPoin
-                                && diposonOfPoints.get(j).canRudeceOne()) {
-                            diposonOfPoints.get(j).maxPoin--;
-                        }
-                    }
-                    tempSumOfPoints = sumOfPoints;
-                    break;
-                }
-            }
-        }
+       int tempSum, tempPoint;
+       boolean f = false;
+       while (true) {
+           tempSum = sumOfPoints;
+           for (int i = 0; i < diposonOfPoints.size(); i++) {
+               if (f && i != diposonOfPoints.size() - 1) {
+                   tempPoint = diposonOfPoints.get(i).maxPoin - 1;
+                   if (tempPoint > diposonOfPoints.get(i).minPoint && tempPoint > diposonOfPoints.get(i + 1).currentPoint) {
+                       diposonOfPoints.get(i).maxPoin -= 1;
+                       f = false;
+                   }
+               }
+               if (tempSum < diposonOfPoints.get(i).minPoint) {
+                   f = true;
+                   break;
+               }
+               diposonOfPoints.get(i).maxPoin = Math.max(tempSum, diposonOfPoints.get(i).maxPoin);
+               tempSum -= diposonOfPoints.get(i).maxPoin;
+           }
+           if (!f)
+               break;
+       }
     }
 
     private static List<DiposonOfPoints> inmutDiaposonse(int countOfStudents) {
