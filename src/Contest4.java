@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class contest4 {
+public class Contest4 {
 
     public static int findUniqueElement(ArrayList<Integer> seq) {
         HashMap<Integer, Boolean> isUniqueMap = new HashMap<Integer, Boolean>();

@@ -5,7 +5,14 @@ import java.util.Scanner;
 
 public class context6 {
 
-    public record DiposonOfPoints(Integer minPoint, Integer maxPoin) implements Comparable<DiposonOfPoints> {
+    public static class DiposonOfPoints implements Comparable<DiposonOfPoints> {
+        Integer minPoint;
+        Integer maxPoin;
+
+        public DiposonOfPoints(Integer minPoint, Integer maxPoin) {
+            this.minPoint = minPoint;
+            this.maxPoin = maxPoin;
+        }
 
         @Override
         public int compareTo(DiposonOfPoints o) {
@@ -17,9 +24,8 @@ public class context6 {
             return resOfCompare;
         }
 
-
         public boolean canRudeceOne() {
-            return
+            return maxPoin - 1 > minPoint;
         }
     }
 
@@ -30,6 +36,36 @@ public class context6 {
         int countOfStudents = sc.nextInt();
         int sumOfPoints = sc.nextInt();
 
+        List<DiposonOfPoints> diposonOfPoints = inmutDiaposonse(countOfStudents);
+
+        diposonOfPoints.sort(Collections.reverseOrder());
+
+        findOptimalPoints(sumOfPoints, diposonOfPoints);
+
+        System.out.println(diposonOfPoints.get(diposonOfPoints.size() / 2 + 1).maxPoin);
+    }
+
+    private static void findOptimalPoints(int sumOfPoints, List<DiposonOfPoints> diposonOfPoints) {
+        var tempSumOfPoints = sumOfPoints;
+        while (tempSumOfPoints != 0) {
+            for (int i = 0; i < diposonOfPoints.size(); i++) {
+                if (tempSumOfPoints - diposonOfPoints.get(i).maxPoin > 0) {
+                    tempSumOfPoints -= diposonOfPoints.get(i).maxPoin;
+                } else if (tempSumOfPoints - diposonOfPoints.get(i).maxPoin < 0) {
+                    for (int j = 0; j < diposonOfPoints.size(); j++) {
+                        if (diposonOfPoints.get(j).maxPoin - 1 > diposonOfPoints.get(j + 1).maxPoin
+                                && diposonOfPoints.get(j).canRudeceOne()) {
+                            diposonOfPoints.get(j).maxPoin--;
+                        }
+                    }
+                    tempSumOfPoints = sumOfPoints;
+                    break;
+                }
+            }
+        }
+    }
+
+    private static List<DiposonOfPoints> inmutDiaposonse(int countOfStudents) {
         List<DiposonOfPoints> diposonOfPoints = new ArrayList<>();
         for (int i = 0; i < countOfStudents; i++) {
             int min = sc.nextInt();
@@ -37,26 +73,6 @@ public class context6 {
 
             diposonOfPoints.add(new DiposonOfPoints(min, max));
         }
-
-
-        diposonOfPoints.sort(Collections.reverseOrder());
-        var tempSumOfPoints = sumOfPoints;
-        while (true) {
-            for (int i = 0; i < diposonOfPoints.size(); i++) {
-                if (tempSumOfPoints - diposonOfPoints.get(i).maxPoin > 0) {
-                    tempSumOfPoints -= diposonOfPoints.get(i).maxPoin;
-                }
-                else {
-                    for (int j = 0; j < diposonOfPoints.size(); j++) {
-                        if (diposonOfPoints.get(j).maxPoin - 1 > diposonOfPoints.get(j + 1).maxPoin
-                                && diposonOfPoints.get(j).canRudeceOne())
-                    }
-                }
-            }
-        }
-
-
+        return diposonOfPoints;
     }
-
-
 }
