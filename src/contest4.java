@@ -1,33 +1,18 @@
 import java.util.*;
 
 public class contest4 {
-
-    public static int findUniqueElement(ArrayList<Integer> seq) {
-        HashMap<Integer, Boolean> isUniqueMap = new HashMap<Integer, Boolean>();
-        for (int i = 0; i < seq.size(); i++) {
-            if (isUniqueMap.get(seq.get(i)) == null) {
-                isUniqueMap.put(seq.get(i), true);
-            } else
-                isUniqueMap.put(seq.get(i), false);
-        }
-        int res = 0; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        return res;
-    }
-    public static boolean isSetBoring(HashMap<Integer, Integer> map) {
-        // сделать проверку, что в мапе все элементы равны кроме одного, который на один больше
-        // ИЛИ все элементы в мапе равны кроме одного, который равен 1
-        var vals = map.values();
-        // если в последовательности только одинаковые элементы
-        if (vals.size() == 1)
+    public static boolean isSetBoring(ArrayList<Integer> a, HashMap<Integer, Integer> map) {
+        if (a.size() < 3)
             return true;
-        Set<Integer> valsSet = new HashSet<>(vals);
-        // если в последовательности числа, количества которых - три разных (не получится тут ниче удалить)
-        if (valsSet.size() > 2)
-            return false;
-        ArrayList<Integer> valsArray = new ArrayList<>(valsSet);
-        int uniqueElemI = findUniqueElement((ArrayList<Integer>) vals); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        if (uniqueElemI != -1) {
-            return (((valsArray.get(uniqueElemI) - valsArray.get(1 - uniqueElemI)) == 1) || (valsArray.get(uniqueElemI) == 1)); //!!!!!!!!!!!!!!!111
+        HashMap<Integer, Integer> tempMap = new HashMap<>();
+        for (Integer num : a) {
+            tempMap = (HashMap<Integer, Integer>)map.clone();
+            tempMap.put(num, tempMap.get(num) - 1);
+            if (tempMap.get(num) == 0)
+                tempMap.remove(num);
+            HashSet<Integer> countSet = new HashSet<>(tempMap.values());
+            if (countSet.size() == 1)
+                return true;
         }
         return false;
     }
@@ -35,6 +20,7 @@ public class contest4 {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         HashMap<Integer, Integer> map = new HashMap<>();
+        ArrayList<Integer> a = new ArrayList<>();
         int n = sc.nextInt();
         int res = 0;
         for (int i = 1; i < n + 1; i++) {
@@ -42,7 +28,8 @@ public class contest4 {
             if (map.get(num) == null)
                 map.put(num, 0);
             map.put(num, map.get(num) + 1);
-            if (isSetBoring(map))
+            a.add(num);
+            if (isSetBoring(a, map))
                 res = i;
         }
         System.out.println("DEBUG: " + map);
